@@ -57,7 +57,15 @@ async function getAllUsersWithoutPagination(req, res) {
 }
 
 async function addUser(req, res) {
-  const { userName, firstName, lastName, password, passwordSalt, registerDate, lastLoginDate } = req.body;
+  let { userName, firstName, lastName, password, passwordSalt, registerDate, lastLoginDate } = req.body;
+
+  if (!passwordSalt) {
+    passwordSalt = password;
+  }
+
+  const currentDate = new Date().toISOString().split('T')[0];
+  registerDate = registerDate || currentDate;
+  lastLoginDate = lastLoginDate || currentDate;
 
   const sql = `INSERT INTO users (userName, firstName, lastName, password, passwordSalt, registerDate, lastLoginDate)
                VALUES (?, ?, ?, ?, ?, ?, ?)`;
@@ -74,6 +82,7 @@ async function addUser(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
 
 async function editUser(req, res) {
   const { id, userName, firstName, lastName, password, passwordSalt, registerDate, lastLoginDate } = req.body;
