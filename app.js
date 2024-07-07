@@ -1,31 +1,43 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');  
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger/combined.json');
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger/combined.json");
 
-const orderRoutes = require('./routes/order');
-const productRoutes = require('./routes/product');
-const userRoutes = require('./routes/user');
+const orderRoutes = require("./routes/order");
+const productRoutes = require("./routes/product");
+const userRoutes = require("./routes/user");
 
 const app = express();
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: 'https://fishbone-app.onrender.com', 
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "https://fishbone-app.onrender.com",
+      "http://localhost:3000",
+    ];
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   optionsSuccessStatus: 200,
-}; 
+};
 
-app.use(cors(corsOptions));  
+app.use(cors(corsOptions));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use('/api/orders', orderRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/users', userRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
-app.get('/', (req, res) => {
-  res.send('<h1>Welcome to Fishbone API</h1><p>Visit <a href="/api-docs">API Docs</a> for API documentation.</p>');
+app.get("/", (req, res) => {
+  res.send(
+    '<h1>Welcome to Fishbone API</h1><p>Visit <a href="/api-docs">API Docs</a> for API documentation.</p>'
+  );
 });
 
 const PORT = process.env.PORT || 3000;
