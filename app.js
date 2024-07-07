@@ -16,6 +16,7 @@ const corsOptions = {
     const allowedOrigins = [
       "https://fishbone-app.onrender.com",
       "http://localhost:3000",
+      "http://localhost:3001",
     ];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
